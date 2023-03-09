@@ -27,7 +27,7 @@ d3.json(url).then(function (data) {
     let sampleValues = firstSample.sample_values.slice(0, 10).reverse();
 
     // Trace for the sample data
-    let trace = {
+    let trace1 = {
         x: sampleValues,
         y: sortedSample.map(s => `ID: ${s.otu_id}  `),
         text: sortedSample.map(s => s.otu_labels),
@@ -35,17 +35,61 @@ d3.json(url).then(function (data) {
         orientation: "h"
     };
 
-    // Data trace array
-    let numval = [trace];
+    // Data trace1 array
+    let numval1 = [trace1];
 
     // Apply the group bar mode to the layout
-    let layout = {
+    let layout1 = {
         hovermode: "closest",
         title: "Top 10 Operational Taxonomic Units"
     };
-    console.log(numval);
+    console.log(numval1);
 
     // Render the plot to the div tag with id "plot"
-    Plotly.newPlot("bar", numval, layout);
+    Plotly.newPlot("bar", numval1, layout1);
+
+    // ++++++++++++++++++++++++++++++++
+    // 3. Create a bubble chart that displays each sample.
+    // Trace for the sample data
+    let trace2 = {
+        x: firstSample.otu_ids,
+        y: firstSample.sample_values,
+        text: firstSample.otu_labels,
+        mode: "markers",
+        marker: {
+            size: firstSample.sample_values,
+            color: firstSample.otu_ids
+        }
+    };
+
+    // Data trace2 array
+    let numval2 = [trace2];
+
+    // Apply the group bar mode to the layout
+    let layout2 = {
+        hovermode: "closest",
+        title: "Sample Values by Operational Taxonomic Unit ID",
+        xaxis: { title: "OTU ID" }
+    };
+    console.log(numval2);
+
+    // Render the plot to the div tag with id "plot"
+    Plotly.newPlot("bubble", numval2, layout2);
+
+    // ++++++++++++++++++++++++++++++++
+    // 4. Display the sample metadata
+    // Get the metadata for the first sample
+    let sampleMetadata = data.metadata[0];
+
+    // Fetch data for `#sample-metadata` corresponding to the first sample
+    let display = d3.select("#sample-metadata");
+
+    // Add data (key-value pair)
+    Object.entries(sampleMetadata).
+        forEach(([key, value]) => {
+            display.append("h6").text(`${key}: ${value}`);
+        }
+        );
 
 });
+
